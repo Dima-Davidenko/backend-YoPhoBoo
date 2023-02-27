@@ -15,7 +15,10 @@ const getAll = async (req, res) => {
     'owner',
     'name email'
   );
-  res.json(result);
+  const processedResult = result.map(({ _id: id, name, number }) => {
+    return { id, name, number };
+  });
+  res.json(processedResult);
 };
 
 const getContactById = async (req, res) => {
@@ -31,7 +34,8 @@ const getContactById = async (req, res) => {
 const addContact = async (req, res) => {
   const owner = req.user._id;
   const result = await Contact.create({ ...req.body, owner });
-  res.status(201).json(result);
+  const { _id: id, name, number } = result;
+  res.status(201).json({ id, name, number });
 };
 
 const updateContactById = async (req, res) => {
@@ -53,19 +57,18 @@ const updateFavoriteById = async (req, res) => {
 };
 
 const deleteContactById = async (req, res) => {
-  const { id } = req.params;
-  const result = await Contact.findByIdAndDelete(id);
+  const { id: contactId } = req.params;
+  const result = await Contact.findByIdAndDelete(contactId);
   if (!result) {
-    throw HttpError(404, `Contact with ${id} not found`);
+    throw HttpError(404, `Contact with ${contactId} not found`);
   }
-  res.json({
-    message: 'Delete success',
-  });
+  const { _id: id, name, number } = result;
+  res.json({ id, name, number });
 };
 
 module.exports = {
   getAll: ctrlWrapper(getAll),
-  geById: ctrlWrapper(getContactById),
+  getById: ctrlWrapper(getContactById),
   add: ctrlWrapper(addContact),
   updateById: ctrlWrapper(updateContactById),
   updateFavoriteById: ctrlWrapper(updateFavoriteById),

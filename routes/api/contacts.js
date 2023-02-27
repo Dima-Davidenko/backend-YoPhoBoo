@@ -10,19 +10,11 @@ const router = express.Router();
 
 router.get('/', authenticate, ctrl.getAll);
 
-router.get('/:id', authenticate, isValidId, ctrl.geById);
+router.get('/:id', authenticate, isValidId, ctrl.getById);
 
 router.post('/', authenticate, validateBody(schemas.addSchema), ctrl.add);
 
-router.put('/:id', authenticate, isValidId, validateBody(schemas.addSchema), ctrl.updateById);
-
-router.patch(
-  '/:id/favorite',
-  authenticate,
-  isValidId,
-  validateBody(schemas.updateFavoriteSchema),
-  ctrl.updateFavoriteById
-);
+router.patch('/:id', authenticate, isValidId, validateBody(schemas.addSchema), ctrl.updateById);
 
 router.delete('/:id', authenticate, isValidId, ctrl.deleteById);
 

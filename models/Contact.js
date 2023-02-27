@@ -13,8 +13,9 @@ const contactSchema = new Schema(
     email: {
       type: String,
     },
-    phone: {
+    number: {
       type: String,
+      required: [true, 'Phone is required'],
     },
     favorite: {
       type: Boolean,
@@ -33,8 +34,8 @@ contactSchema.post('save', mongooseHandleError);
 
 const addSchema = Joi.object({
   name: Joi.string().required(),
-  email: Joi.string().required(),
-  phone: Joi.string().required(),
+  email: Joi.string(),
+  number: Joi.string().required(),
   favorite: Joi.boolean(),
 });
 

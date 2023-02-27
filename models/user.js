@@ -12,24 +12,19 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'Password is required'],
     },
+    name: {
+      type: String,
+      required: [true, 'Name is required'],
+    },
     email: {
       type: String,
       match: emailRegex,
       required: [true, 'Email is required'],
       unique: true,
     },
-    subscription: {
-      type: String,
-      enum: ['starter', 'pro', 'business'],
-      default: 'starter',
-    },
     token: {
       type: String,
       default: null,
-    },
-    avatarURL: {
-      type: String,
-      required: true,
     },
   },
   { versionKey: false, timestamps: true }
@@ -38,6 +33,10 @@ const userSchema = new Schema(
 userSchema.post('save', mongooseHandleError);
 
 const registerSchema = Joi.object({
+  name: Joi.string().min(3).required().messages({
+    'string.base': `"name" should be a type of 'string'`,
+    'any.required': `"name" is a required field`,
+  }),
   email: Joi.string().pattern(emailRegex).required().messages({
     'string.base': `"email" should be a type of 'string'`,
     'string.pattern.base': `wrong format of "email"`,
@@ -51,14 +50,9 @@ const loginSchema = Joi.object({
   password: Joi.string().min(6).required(),
 });
 
-const subscriptionSchema = Joi.object({
-  subscription: Joi.string().valid('starter', 'pro', 'business').required(),
-});
-
 const schemas = {
   registerSchema,
   loginSchema,
-  subscriptionSchema,
 };
 
 const User = model('user', userSchema);
